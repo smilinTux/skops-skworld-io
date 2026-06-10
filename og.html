@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;600;700;800&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 1200px; height: 630px; overflow: hidden; }
+    body {
+      font-family: 'Inter', sans-serif;
+      width: 1200px; height: 630px;
+      background:
+        radial-gradient(ellipse at 25% 15%, rgba(255,215,0,.14) 0%, transparent 45%),
+        radial-gradient(ellipse at 80% 85%, rgba(0,255,255,.12) 0%, transparent 45%),
+        radial-gradient(ellipse at 60% 40%, rgba(189,147,249,.10) 0%, transparent 55%),
+        linear-gradient(140deg, #0a0a1a 0%, #0f1020 55%, #14091f 100%);
+      position: relative;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 0 90px; color: #fff;
+    }
+    /* star dots */
+    .dot { position: absolute; border-radius: 50%; }
+    .penguin {
+      position: absolute; top: 60px; right: 90px; font-size: 130px;
+      filter: drop-shadow(0 0 40px rgba(255,215,0,.4));
+    }
+    .eyebrow {
+      font-family: 'JetBrains Mono', monospace; font-size: 24px;
+      letter-spacing: .22em; text-transform: uppercase; color: #00FFFF;
+      margin-bottom: 26px; text-shadow: 0 0 18px rgba(0,255,255,.5);
+    }
+    .title {
+      font-size: 168px; font-weight: 800; line-height: .95; letter-spacing: -4px;
+      background: linear-gradient(135deg, #FFD700 0%, #FF69B4 40%, #00FFFF 80%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 14px;
+    }
+    .tagline {
+      font-size: 52px; font-weight: 700; color: #FFD700;
+      margin-bottom: 22px; letter-spacing: -1px;
+    }
+    .sub {
+      font-size: 30px; font-weight: 400; color: rgba(255,255,255,.78);
+      max-width: 880px; line-height: 1.4;
+    }
+    .sub b { color: #fff; font-weight: 600; }
+    .badges {
+      position: absolute; bottom: 64px; left: 90px; display: flex; gap: 18px;
+      font-family: 'JetBrains Mono', monospace; font-size: 22px;
+    }
+    .badge {
+      padding: 10px 22px; border-radius: 30px;
+      border: 1.5px solid rgba(255,215,0,.4); color: rgba(255,255,255,.85);
+      background: rgba(255,215,0,.06);
+    }
+    .badge.cyan { border-color: rgba(0,255,255,.4); }
+    .badge.green { border-color: rgba(80,250,123,.4); }
+    .footer-brand {
+      position: absolute; bottom: 64px; right: 90px;
+      font-family: 'JetBrains Mono', monospace; font-size: 24px;
+      color: rgba(255,215,0,.7);
+    }
+  </style>
+</head>
+<body>
+  <span class="dot" style="top:90px;left:140px;width:5px;height:5px;background:rgba(255,215,0,.9);box-shadow:0 0 8px rgba(255,215,0,.8)"></span>
+  <span class="dot" style="top:200px;left:60px;width:4px;height:4px;background:rgba(0,255,255,.8)"></span>
+  <span class="dot" style="top:420px;left:200px;width:4px;height:4px;background:rgba(255,105,180,.8)"></span>
+  <span class="dot" style="top:330px;left:90px;width:3px;height:3px;background:rgba(255,255,255,.7)"></span>
+  <span class="dot" style="top:520px;left:520px;width:4px;height:4px;background:rgba(189,147,249,.8)"></span>
+
+  <div class="penguin">🐧</div>
+
+  <div class="eyebrow">Sovereign ITIL Ops · smilinTux</div>
+  <div class="title">skops</div>
+  <div class="tagline">We speak ITIL — with receipts.</div>
+  <div class="sub">Self-healing, self-documenting ops on <b>your own hardware</b>. It fixes what it can, opens a ticket when it can't, and tells you how everything's doing.</div>
+
+  <div class="badges">
+    <div class="badge">🩺 self-heals</div>
+    <div class="badge cyan">🎟️ tracks it all</div>
+    <div class="badge green">📜 GPL-3.0</div>
+  </div>
+  <div class="footer-brand">skops.skworld.io</div>
+</body>
+</html>

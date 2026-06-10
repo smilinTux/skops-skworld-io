@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>skops — Sovereign ITIL Ops · We speak ITIL with receipts</title>
+  <meta name="description" content="skops turns your machines into a self-healing, self-documenting operation. It watches for failures, fixes what it can, opens a ticket when it can't, learns the fix, and tells you how everything's doing — all on your hardware. We speak ITIL — with receipts.">
+
+  <!-- Canonical + Sitemap -->
+  <link rel="canonical" href="https://skops.skworld.io/">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="skops — Sovereign ITIL Ops">
+  <meta property="og:description" content="Self-healing, self-documenting ops on your own hardware. Automatic ITIL loop, soul-driven manager agents, L0→L3 leveling. We speak ITIL — with receipts.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://skops.skworld.io/">
+  <meta property="og:site_name" content="skops · SKWorld">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://skops.skworld.io/og.png">
+  <meta property="og:image:secure_url" content="https://skops.skworld.io/og.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="skops — Sovereign ITIL Ops. We speak ITIL with receipts.">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@smilinTux">
+  <meta name="twitter:title" content="skops — Sovereign ITIL Ops">
+  <meta name="twitter:description" content="Self-healing, self-documenting ops on your own hardware. We speak ITIL — with receipts.">
+  <meta name="twitter:image" content="https://skops.skworld.io/og.png">
+  <meta name="twitter:image:alt" content="skops — Sovereign ITIL Ops">
+  <meta name="twitter:creator" content="@smilinTux">
+
+  <!-- Theme -->
+  <meta name="theme-color" content="#0a0a1a">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐧</text></svg>">
+
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://smilintux.github.io/#organization",
+        "name": "smilinTux",
+        "url": "https://smilintux.github.io",
+        "sameAs": ["https://github.com/smilinTux"],
+        "description": "Sovereign AI infrastructure — building open, authentic, human-first technology. Home of the Pengu Empire.",
+        "foundingDate": "2024",
+        "knowsAbout": ["Sovereign AI", "AI agent infrastructure", "ITIL", "IT service management", "Self-healing infrastructure", "Persistent AI memory"]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://skops.skworld.io/#website",
+        "name": "skops",
+        "url": "https://skops.skworld.io",
+        "publisher": {"@id": "https://smilintux.github.io/#organization"},
+        "inLanguage": "en-US"
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://skops.skworld.io/#app",
+        "name": "skops",
+        "alternateName": "Sovereign ITIL Ops",
+        "description": "The sovereign ITIL ops capability of the SKWorld ecosystem. Self-heals failures, opens tickets when it can't, runs an automatic ITIL loop (incident → problem → change → CMDB), and adds soul-driven manager agents that validate the automation. Light by default (L0, one machine), levels to enterprise (L3). We speak ITIL — with receipts.",
+        "url": "https://skops.skworld.io",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Linux, macOS",
+        "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+        "license": "https://www.gnu.org/licenses/gpl-3.0.en.html",
+        "codeRepository": "https://github.com/smilinTux/skops",
+        "isPartOf": {"@type": "SoftwareApplication", "name": "SKWorld", "url": "https://skworld.io"},
+        "publisher": {"@id": "https://smilintux.github.io/#organization"}
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    /* ── Reset + tokens ───────────────────── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --gold:   #FFD700;
+      --pink:   #FF69B4;
+      --cyan:   #00FFFF;
+      --green:  #50fa7b;
+      --purple: #bd93f9;
+      --red:    #ff6188;
+      --bg:     #0a0a0f;
+      --bg2:    #0f1020;
+      --card:   rgba(15, 16, 40, 0.7);
+      --border: rgba(255,215,0,0.15);
+      --text:   rgba(255,255,255,0.88);
+      --dim:    rgba(255,255,255,0.55);
+      --mono:   'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    /* ── Starfield background ─────────────── */
+    .starfield {
+      position: fixed; inset: 0; z-index: -1;
+      background: radial-gradient(ellipse at 50% -10%, #1a1a3e 0%, #0d0d1f 40%, #0a0a0f 100%);
+    }
+    .stars {
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(2px 2px at 20px 30px,  rgba(255,215,0,0.9),  transparent),
+        radial-gradient(2px 2px at 40px 70px,  rgba(0,255,255,0.7),  transparent),
+        radial-gradient(1px 1px at 90px 40px,  rgba(255,255,255,0.9),transparent),
+        radial-gradient(1px 1px at 130px 80px, rgba(255,105,180,0.8),transparent),
+        radial-gradient(2px 2px at 160px 30px, rgba(255,255,255,0.6),transparent),
+        radial-gradient(1px 1px at 70px 55px,  rgba(189,147,249,0.7),transparent);
+      background-repeat: repeat;
+      background-size: 200px 100px;
+      animation: starscroll 100s linear infinite;
+    }
+    .stars:nth-child(2) { background-size: 270px 130px; animation-duration: 145s; animation-direction: reverse; opacity: .7; }
+    .stars:nth-child(3) { background-size: 340px 165px; animation-duration: 190s; opacity: .45; }
+    @keyframes starscroll {
+      from { transform: translateX(0)      translateY(0); }
+      to   { transform: translateX(-200px) translateY(-100px); }
+    }
+
+    /* ── Floating deco ────────────────────── */
+    .float-deco {
+      position: fixed; font-size: 1.6rem; z-index: 0; pointer-events: none;
+      animation: floatDeco 18s infinite ease-in-out;
+      opacity: .35;
+    }
+    @keyframes floatDeco {
+      0%,100% { transform: translateY(0) rotate(-4deg); opacity: .3; }
+      33%  { transform: translateY(-28px) rotate(6deg); opacity: .6; }
+      66%  { transform: translateY(-48px) rotate(-2deg); opacity: .45; }
+    }
+
+    /* ── Layout helpers ───────────────────── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 1; }
+    section { padding: 5rem 0; }
+
+    /* ── Sticky nav ───────────────────────── */
+    .site-nav {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(10, 10, 20, 0.88);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(255,215,0,0.12);
+    }
+    .nav-inner {
+      display: flex; justify-content: space-between; align-items: center;
+      max-width: 1200px; margin: 0 auto; padding: .75rem 2rem;
+    }
+    .nav-logo {
+      font-family: var(--mono); font-weight: 700; font-size: 1.25rem;
+      color: var(--gold); text-decoration: none; letter-spacing: -.5px;
+    }
+    .nav-logo span { color: var(--cyan); }
+    .nav-links { display: flex; list-style: none; gap: 1.4rem; align-items: center; }
+    .nav-links a {
+      color: var(--dim); text-decoration: none; font-size: .875rem;
+      font-weight: 500; transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta {
+      background: linear-gradient(135deg, var(--gold), var(--pink));
+      color: #000 !important; padding: .45rem 1.2rem; border-radius: 6px;
+      font-weight: 700 !important; font-size: .85rem !important;
+    }
+    .nav-cta:hover { opacity: .85; }
+    @media (max-width: 860px) { .nav-links { display: none; } }
+
+    /* ── HERO ─────────────────────────────── */
+    .hero {
+      padding: 6.5rem 0 4.5rem;
+      text-align: center;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, rgba(189,147,249,.08) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-family: var(--mono); font-size: .9rem; color: var(--cyan);
+      letter-spacing: .15em; text-transform: uppercase; margin-bottom: 1.5rem;
+      display: inline-block;
+      animation: eyebrowPulse 4s ease-in-out infinite;
+    }
+    @keyframes eyebrowPulse {
+      0%,100% { text-shadow: 0 0 8px rgba(0,255,255,.4); }
+      50%      { text-shadow: 0 0 18px rgba(0,255,255,.8), 0 0 35px rgba(0,255,255,.3); }
+    }
+    .hero-title {
+      font-size: clamp(4rem, 9vw, 8rem);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -2px;
+      margin-bottom: .75rem;
+      background: linear-gradient(140deg, var(--gold) 0%, var(--pink) 35%, var(--cyan) 65%, var(--gold) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: titleShimmer 5s ease-in-out infinite;
+    }
+    @keyframes titleShimmer {
+      0%,100% { filter: hue-rotate(0deg); }
+      40%      { filter: hue-rotate(25deg); }
+      70%      { filter: hue-rotate(-15deg); }
+    }
+    .hero-tagline {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      color: var(--gold);
+      font-weight: 600;
+      max-width: 760px;
+      margin: 0 auto .9rem;
+      line-height: 1.4;
+    }
+    .hero-sub {
+      font-size: 1.05rem; color: rgba(255,255,255,.78);
+      max-width: 640px; margin: 0 auto 2.5rem; line-height: 1.7;
+    }
+    .hero-sub strong { color: rgba(255,255,255,.92); font-weight: 600; }
+
+    /* Install box */
+    .install-box-wrap {
+      display: flex; flex-direction: column; align-items: center; gap: .75rem;
+      margin-bottom: 1.5rem;
+    }
+    .install-box {
+      display: flex; align-items: center; gap: 1rem;
+      background: rgba(0,0,0,.7);
+      border: 1.5px solid rgba(255,215,0,.45);
+      border-radius: 12px;
+      padding: 1rem 1.4rem;
+      max-width: 560px; width: 100%;
+      transition: border-color .3s, box-shadow .3s;
+    }
+    .install-box:hover {
+      border-color: var(--gold);
+      box-shadow: 0 0 28px rgba(255,215,0,.25);
+    }
+    .install-cmd {
+      font-family: var(--mono); font-size: .95rem; color: var(--green);
+      flex: 1; text-align: left; word-break: break-all;
+    }
+    .copy-btn {
+      background: none; border: 1px solid rgba(255,215,0,.4);
+      color: var(--gold); border-radius: 6px; padding: .3rem .7rem;
+      font-size: .8rem; font-family: var(--mono); cursor: pointer;
+      transition: all .2s; white-space: nowrap;
+    }
+    .copy-btn:hover { background: rgba(255,215,0,.1); border-color: var(--gold); }
+    .copy-btn.copied { color: var(--green); border-color: var(--green); background: rgba(80,250,123,.1); }
+
+    /* Hero CTAs */
+    .hero-ctas {
+      display: flex; justify-content: center; gap: 1rem;
+      flex-wrap: wrap; margin-top: 1rem;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: .45rem;
+      padding: .8rem 1.8rem; border-radius: 10px;
+      font-weight: 600; font-size: .95rem; text-decoration: none;
+      transition: all .25s; position: relative; overflow: hidden;
+      border: none; cursor: pointer;
+    }
+    .btn::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent);
+      transform: translateX(-100%); transition: transform .5s;
+    }
+    .btn:hover::after { transform: translateX(100%); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--pink) 60%);
+      color: #000;
+      box-shadow: 0 4px 20px rgba(255,215,0,.35);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(255,215,0,.5); }
+    .btn-outline {
+      background: rgba(255,255,255,.04);
+      border: 1.5px solid rgba(255,215,0,.3);
+      color: rgba(255,255,255,.85);
+    }
+    .btn-outline:hover { border-color: var(--gold); background: rgba(255,215,0,.07); transform: translateY(-2px); }
+    .btn-ghost {
+      background: transparent; border: 1.5px solid rgba(255,255,255,.15);
+      color: var(--dim);
+    }
+    .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); transform: translateY(-2px); }
+
+    /* Trust badges under hero */
+    .hero-trust {
+      display: flex; justify-content: center; gap: 2rem;
+      flex-wrap: wrap; margin-top: 3rem;
+      font-size: .82rem; color: var(--dim);
+    }
+    .hero-trust span { display: flex; align-items: center; gap: .4rem; }
+    .hero-trust strong { color: rgba(255,255,255,.7); }
+
+    /* ── Section headings ─────────────────── */
+    .section-eyebrow {
+      font-family: var(--mono); font-size: .8rem; color: var(--cyan);
+      letter-spacing: .15em; text-transform: uppercase; margin-bottom: .75rem;
+    }
+    .section-title {
+      font-size: clamp(1.9rem, 3.5vw, 2.8rem); font-weight: 800;
+      margin-bottom: .75rem; line-height: 1.15;
+    }
+    .section-sub { color: var(--dim); max-width: 680px; font-size: 1rem; line-height: 1.7; }
+
+    /* ── Dividers / gradient sections ─────── */
+    .section-divider { border: none; border-top: 1px solid rgba(255,215,0,.08); margin: 0; }
+    .gradient-section {
+      background: linear-gradient(135deg, rgba(189,147,249,.06) 0%, rgba(255,105,180,.04) 50%, rgba(0,255,255,.04) 100%);
+      border-top: 1px solid rgba(255,215,0,.08);
+      border-bottom: 1px solid rgba(255,215,0,.08);
+    }
+
+    /* ── WHAT IS ITIL — plain English table ─ */
+    .itil-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start;
+      margin-top: 2.5rem;
+    }
+    @media (max-width: 860px) { .itil-grid { grid-template-columns: 1fr; } }
+    .itil-text p { color: var(--dim); line-height: 1.8; margin-bottom: 1rem; }
+    .itil-text p strong { color: rgba(255,255,255,.88); }
+    .itil-text .pull {
+      font-size: 1.1rem; color: rgba(255,255,255,.85); font-weight: 500;
+      border-left: 3px solid var(--gold); padding-left: 1rem; margin: 1.5rem 0;
+      line-height: 1.6;
+    }
+
+    .plain-table {
+      width: 100%; border-collapse: collapse;
+      background: rgba(0,0,0,.35);
+      border: 1px solid rgba(255,215,0,.15); border-radius: 14px; overflow: hidden;
+      font-size: .85rem;
+    }
+    .plain-table th {
+      text-align: left; padding: .65rem .85rem;
+      background: rgba(255,215,0,.07);
+      font-family: var(--mono); font-size: .7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .08em; color: var(--cyan);
+      border-bottom: 1px solid rgba(255,215,0,.18);
+    }
+    .plain-table td {
+      padding: .6rem .85rem; border-bottom: 1px solid rgba(255,255,255,.05);
+      color: rgba(255,255,255,.7); vertical-align: top;
+    }
+    .plain-table tr:last-child td { border-bottom: none; }
+    .plain-table .itil-word { font-family: var(--mono); color: var(--gold); font-weight: 600; white-space: nowrap; }
+    .plain-table .plain { color: rgba(255,255,255,.85); }
+
+    /* ── 3AM STORY (hero narrative) ───────── */
+    .story-timeline {
+      max-width: 760px; margin: 2.5rem auto 0;
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .story-step {
+      display: grid; grid-template-columns: 5.5rem 1fr; gap: 1.25rem;
+      padding: 1rem 0; position: relative;
+      border-left: 2px solid rgba(255,215,0,.2); padding-left: 1.5rem; margin-left: .5rem;
+    }
+    .story-step::before {
+      content: ''; position: absolute; left: -7px; top: 1.4rem;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--gold); box-shadow: 0 0 10px rgba(255,215,0,.6);
+    }
+    .story-step.fixed::before { background: var(--green); box-shadow: 0 0 10px rgba(80,250,123,.6); }
+    .story-step.problem::before { background: var(--pink); box-shadow: 0 0 10px rgba(255,105,180,.6); }
+    .story-step.change::before { background: var(--cyan); box-shadow: 0 0 10px rgba(0,255,255,.6); }
+    .story-time {
+      font-family: var(--mono); font-size: .82rem; color: var(--gold);
+      font-weight: 600; padding-top: .15rem;
+    }
+    .story-body { color: rgba(255,255,255,.78); font-size: .95rem; line-height: 1.6; }
+    .story-body .tag {
+      font-family: var(--mono); font-size: .72rem; padding: .12rem .5rem;
+      border-radius: 4px; margin-left: .35rem; font-weight: 600;
+      background: rgba(255,215,0,.12); color: var(--gold); border: 1px solid rgba(255,215,0,.25);
+    }
+    .story-body .tag.green { background: rgba(80,250,123,.12); color: var(--green); border-color: rgba(80,250,123,.3); }
+    .story-body .tag.pink { background: rgba(255,105,180,.12); color: var(--pink); border-color: rgba(255,105,180,.3); }
+    .story-body .tag.cyan { background: rgba(0,255,255,.1); color: var(--cyan); border-color: rgba(0,255,255,.3); }
+    .story-footer {
+      margin-top: 2rem; text-align: center; color: var(--dim);
+      font-size: .92rem; max-width: 620px; margin-left: auto; margin-right: auto;
+    }
+    .story-footer strong { color: rgba(255,255,255,.78); }
+
+    /* ── Mermaid diagram cards ────────────── */
+    .diagram-card {
+      background: rgba(0,0,0,.45);
+      border: 1px solid rgba(255,215,0,.2);
+      border-radius: 16px; padding: 1.5rem;
+      margin-top: 2rem; overflow-x: auto;
+    }
+    .diagram-card .mermaid { text-align: center; }
+    .diagram-card .d-cap {
+      font-family: var(--mono); font-size: .75rem; color: var(--cyan);
+      text-transform: uppercase; letter-spacing: .08em; margin-bottom: 1rem;
+    }
+    .two-diagram { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+    @media (max-width: 980px) { .two-diagram { grid-template-columns: 1fr; } }
+    .two-diagram .diagram-card { margin-top: 0; }
+
+    /* ── MANAGER MATRIX ───────────────────── */
+    .mgr-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.4rem; margin-top: 3rem;
+    }
+    .mgr-card {
+      background: var(--card); backdrop-filter: blur(12px);
+      border: 1.5px solid var(--border); border-radius: 16px;
+      padding: 1.75rem; transition: all .3s; position: relative; overflow: hidden;
+    }
+    .mgr-card::before { content: ''; position: absolute; top:0; left:0; right:0; height: 3px; }
+    .mgr-card.steward::before { background: linear-gradient(90deg, var(--gold), var(--pink)); }
+    .mgr-card.incident::before { background: linear-gradient(90deg, var(--red), var(--gold)); }
+    .mgr-card.problem::before { background: linear-gradient(90deg, var(--pink), var(--purple)); }
+    .mgr-card.change::before { background: linear-gradient(90deg, var(--cyan), var(--purple)); }
+    .mgr-card.config::before { background: linear-gradient(90deg, var(--green), var(--cyan)); }
+    .mgr-card.report::before { background: linear-gradient(90deg, var(--purple), var(--gold)); }
+    .mgr-card:hover { transform: translateY(-6px); border-color: rgba(255,215,0,.4); box-shadow: 0 16px 40px rgba(0,0,0,.35); }
+    .mgr-head { display: flex; align-items: center; gap: .75rem; margin-bottom: .35rem; }
+    .mgr-icon { font-size: 1.8rem; }
+    .mgr-name { font-size: 1.15rem; font-weight: 700; color: #fff; }
+    .mgr-id { font-family: var(--mono); font-size: .72rem; color: var(--dim); }
+    .mgr-soul { font-style: italic; color: rgba(255,255,255,.78); font-size: .92rem; margin: .75rem 0 1rem; line-height: 1.55; }
+    .mgr-soul .q { color: var(--gold); }
+    .mgr-meta { display: flex; flex-direction: column; gap: .45rem; }
+    .mgr-row { display: flex; gap: .5rem; font-size: .8rem; align-items: baseline; }
+    .mgr-row .k { font-family: var(--mono); color: var(--cyan); min-width: 4.5rem; text-transform: uppercase; font-size: .68rem; letter-spacing: .05em; }
+    .mgr-row .v { color: rgba(255,255,255,.68); }
+    .mgr-row .v code { font-family: var(--mono); color: var(--gold); font-size: .8rem; }
+    .mgr-badge {
+      display: inline-block; font-family: var(--mono); font-size: .65rem; font-weight: 700;
+      padding: .15rem .5rem; border-radius: 4px; text-transform: uppercase; letter-spacing: .08em;
+      margin-left: auto; align-self: flex-start;
+    }
+    .mgr-badge.l0 { background: rgba(255,215,0,.15); color: var(--gold); border: 1px solid rgba(255,215,0,.3); }
+    .mgr-badge.l1 { background: rgba(0,255,255,.1); color: var(--cyan); border: 1px solid rgba(0,255,255,.3); }
+
+    .why-souls {
+      margin-top: 2.5rem; background: rgba(0,0,0,.3);
+      border: 1px solid rgba(255,215,0,.15); border-left: 3px solid var(--gold);
+      border-radius: 0 14px 14px 0; padding: 1.5rem 1.75rem;
+      max-width: 820px;
+    }
+    .why-souls h3 { font-size: 1.1rem; color: #fff; margin-bottom: .6rem; }
+    .why-souls p { color: var(--dim); line-height: 1.75; font-size: .95rem; }
+    .why-souls strong { color: var(--gold); }
+
+    /* ── LEVELS TABLE ─────────────────────── */
+    .levels-table-wrap { overflow-x: auto; margin-top: 2.5rem; }
+    .levels-table {
+      width: 100%; border-collapse: collapse; min-width: 720px;
+      background: rgba(0,0,0,.35); border: 1px solid rgba(255,215,0,.15);
+      border-radius: 14px; overflow: hidden; font-size: .85rem;
+    }
+    .levels-table th {
+      text-align: left; padding: .8rem 1rem; background: rgba(255,215,0,.07);
+      font-family: var(--mono); font-size: .7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .08em; color: var(--cyan);
+      border-bottom: 1px solid rgba(255,215,0,.18);
+    }
+    .levels-table td { padding: .7rem 1rem; border-bottom: 1px solid rgba(255,255,255,.05); color: rgba(255,255,255,.7); vertical-align: top; }
+    .levels-table tr:last-child td { border-bottom: none; }
+    .levels-table .lvl { font-family: var(--mono); font-weight: 700; white-space: nowrap; }
+    .levels-table .l0 { color: var(--gold); }
+    .levels-table .l1 { color: var(--cyan); }
+    .levels-table .l2 { color: var(--purple); }
+    .levels-table .l3 { color: var(--green); }
+    .levels-note { margin-top: 1.5rem; color: var(--dim); font-size: .92rem; line-height: 1.7; max-width: 760px; }
+    .levels-note strong { color: rgba(255,255,255,.78); }
+
+    /* ── ADAPTERS / MONITORING ────────────── */
+    .axis-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.4rem; margin-top: 2.5rem; }
+    .axis-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 1.6rem; transition: all .3s; backdrop-filter: blur(12px); }
+    .axis-card:hover { transform: translateY(-5px); border-color: rgba(0,255,255,.35); box-shadow: 0 14px 35px rgba(0,255,255,.08); }
+    .axis-head { display: flex; align-items: center; gap: .6rem; margin-bottom: 1rem; }
+    .axis-icon { font-size: 1.6rem; }
+    .axis-name { font-size: 1.05rem; font-weight: 700; color: #fff; }
+    .axis-port { font-family: var(--mono); font-size: .7rem; color: var(--dim); }
+    .axis-prog { display: flex; flex-direction: column; gap: .4rem; }
+    .axis-step { display: flex; align-items: baseline; gap: .5rem; font-size: .82rem; }
+    .axis-lvl { font-family: var(--mono); font-size: .68rem; font-weight: 700; padding: .1rem .4rem; border-radius: 3px; white-space: nowrap; }
+    .axis-lvl.a0 { background: rgba(255,215,0,.13); color: var(--gold); }
+    .axis-lvl.a1 { background: rgba(0,255,255,.1); color: var(--cyan); }
+    .axis-lvl.a2 { background: rgba(189,147,249,.12); color: var(--purple); }
+    .axis-lvl.a3 { background: rgba(80,250,123,.1); color: var(--green); }
+    .axis-tech { color: rgba(255,255,255,.68); }
+
+    /* ── Standards / glue pills ───────────── */
+    .standards-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-top: 2.5rem; }
+    .std-pill {
+      display: flex; align-items: center; gap: .5rem;
+      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px; padding: .6rem 1.2rem;
+      font-family: var(--mono); font-size: .82rem; color: rgba(255,255,255,.7); transition: all .2s;
+    }
+    .std-pill:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,255,255,.05); }
+
+    /* ── WHERE IT LIVES — ecosystem ───────── */
+    .eco-grid { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 2rem; }
+    .eco-link {
+      display: inline-flex; align-items: center; gap: .45rem;
+      background: rgba(255,255,255,.04); border: 1px solid rgba(255,215,0,.18);
+      border-radius: 24px; padding: .55rem 1.2rem;
+      font-size: .875rem; font-weight: 500; color: rgba(255,255,255,.75); text-decoration: none;
+      transition: all .25s;
+    }
+    .eco-link:hover { border-color: var(--gold); color: var(--gold); background: rgba(255,215,0,.07); transform: translateY(-2px); }
+    .eco-link.feature { border-color: rgba(0,255,255,.35); }
+
+    .quickstart {
+      background: #050508; border: 1px solid rgba(255,255,255,.1);
+      border-radius: 14px; overflow: hidden; max-width: 680px; margin: 2.5rem auto 0;
+      box-shadow: 0 20px 60px rgba(0,0,0,.6); text-align: left;
+    }
+    .term-bar { background: #1a1a2e; padding: .6rem 1rem; display: flex; align-items: center; gap: .5rem; }
+    .term-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .term-dot.r { background: #ff5f57; } .term-dot.y { background: #febc2e; } .term-dot.g { background: #28c840; }
+    .term-title { font-family: var(--mono); font-size: .78rem; color: var(--dim); margin-left: auto; }
+    .term-body { padding: 1.5rem; font-family: var(--mono); font-size: .85rem; line-height: 1.9; }
+    .t-prompt { color: var(--green); } .t-cmd { color: #fff; } .t-comment { color: rgba(255,255,255,.35); } .t-out { color: var(--dim); } .t-bold { color: var(--gold); font-weight: 700; }
+
+    /* ── ECOSYSTEM DIAGRAM (where skops lives) ─ */
+    .where-tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 1.2rem; margin-top: 2.5rem; }
+    .where-tier { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 1.5rem; backdrop-filter: blur(12px); }
+    .where-tier.core { border-color: rgba(255,215,0,.45); box-shadow: 0 0 30px rgba(255,215,0,.07); }
+    .where-tier h4 { font-family: var(--mono); font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; color: var(--cyan); margin-bottom: .9rem; }
+    .where-tier .ci { font-size: .85rem; color: rgba(255,255,255,.7); padding: .25rem 0; }
+    .where-tier .ci.hero { color: var(--gold); font-weight: 700; }
+    .where-tier .ci code { font-family: var(--mono); color: var(--gold); }
+
+    /* ── FINAL CTA ────────────────────────── */
+    .cta-section { text-align: center; background: radial-gradient(ellipse at 50% 100%, rgba(255,215,0,.06) 0%, transparent 65%); }
+    .cta-section h2 { font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800; margin-bottom: 1rem; }
+
+    /* ── FOOTER ───────────────────────────── */
+    .site-footer { padding: 2.5rem 0; border-top: 1px solid rgba(255,215,0,.12); background: rgba(0,0,0,.4); }
+    .footer-inner { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
+    .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem 1.5rem; }
+    .footer-links a { color: var(--dim); text-decoration: none; font-size: .875rem; transition: color .2s; }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy { font-family: var(--mono); font-size: .8rem; color: rgba(255,255,255,.3); text-align: center; }
+    .footer-copy span { color: var(--gold); }
+
+    /* ── Responsive tweaks ─────────────────── */
+    @media (max-width: 640px) {
+      section { padding: 3.5rem 0; }
+      .container { padding: 0 1rem; }
+      .hero { padding: 4.5rem 0 3rem; }
+      .install-box { flex-direction: column; align-items: flex-start; }
+      .story-step { grid-template-columns: 1fr; gap: .3rem; }
+    }
+
+    /* ── Scroll reveal ─────────────────────── */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+  <!-- Starfield -->
+  <div class="starfield" aria-hidden="true">
+    <div class="stars"></div>
+    <div class="stars"></div>
+    <div class="stars"></div>
+  </div>
+
+  <!-- Floating decorations -->
+  <div class="float-deco" style="top:18%;left:4%;animation-delay:0s">🐧</div>
+  <div class="float-deco" style="top:35%;right:5%;animation-delay:4s">🩺</div>
+  <div class="float-deco" style="top:65%;left:2.5%;animation-delay:8s">🎟️</div>
+  <div class="float-deco" style="top:80%;right:9%;animation-delay:6s">📈</div>
+
+  <!-- ── NAV ─────────────────────────────────── -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="https://skops.skworld.io/" class="nav-logo">🐧 <span>sk</span>ops</a>
+      <ul class="nav-links">
+        <li><a href="#what-is-itil">What is ITIL</a></li>
+        <li><a href="#loop">The loop</a></li>
+        <li><a href="#managers">Managers</a></li>
+        <li><a href="#levels">Levels</a></li>
+        <li><a href="#workflows">Workflows</a></li>
+        <li><a href="#ecosystem">Ecosystem</a></li>
+        <li><a href="https://github.com/smilinTux/skops" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="#install" class="nav-cta">Install ↓</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ── HERO ─────────────────────────────────── -->
+  <header class="hero" id="top">
+    <div class="container">
+      <div class="hero-eyebrow" aria-label="Product category">Sovereign ITIL Ops · smilinTux ecosystem</div>
+
+      <h1 class="hero-title">skops</h1>
+
+      <p class="hero-tagline">We speak ITIL — with receipts.</p>
+
+      <p class="hero-sub">
+        skops turns your machines into a <strong>self-healing, self-documenting operation</strong>.
+        It watches for failures, fixes what it can, opens a ticket when it can't, learns the fix,
+        and tells you how everything's doing — all on <strong>your</strong> hardware.
+        No SaaS. No per-seat pricing.
+      </p>
+
+      <!-- Install box -->
+      <div class="install-box-wrap" id="install">
+        <div class="install-box" role="group" aria-label="Installation command">
+          <code class="install-cmd" id="install-cmd-text">pip install -e . && skops status</code>
+          <button class="copy-btn" id="copy-btn" onclick="copyInstall()" aria-label="Copy install command">copy</button>
+        </div>
+      </div>
+
+      <!-- CTAs -->
+      <div class="hero-ctas">
+        <a href="https://github.com/smilinTux/skops" class="btn btn-primary" target="_blank" rel="noopener">⭐ Star on GitHub</a>
+        <a href="#what-is-itil" class="btn btn-outline">Never heard of ITIL? Start here</a>
+        <a href="#loop" class="btn btn-ghost">See the loop ↓</a>
+      </div>
+
+      <!-- Trust signals -->
+      <div class="hero-trust" role="list" aria-label="Key properties">
+        <span role="listitem"><span aria-hidden="true">🩺</span> <strong>Self-heals</strong> · auto-remediation first</span>
+        <span role="listitem"><span aria-hidden="true">🎟️</span> <strong>Opens tickets</strong> · when it can't fix it</span>
+        <span role="listitem"><span aria-hidden="true">🔒</span> <strong>100% your hardware</strong> · no SaaS</span>
+        <span role="listitem"><span aria-hidden="true">📜</span> <strong>GPL-3.0</strong> · free forever</span>
+      </div>
+    </div>
+  </header>
+
+  <hr class="section-divider">
+
+  <!-- ── THE 60-SECOND VERSION ────────────────── -->
+  <section id="loop" class="gradient-section" aria-labelledby="loop-heading">
+    <div class="container">
+      <div class="reveal">
+        <div class="section-eyebrow">The 60-second version</div>
+        <h2 class="section-title" id="loop-heading">Something breaks. skops handles it.</h2>
+        <p class="section-sub">
+          skops is <strong>not a new platform</strong> — it's the connective tissue that wires
+          together tools you already run (alerts, scheduler, health checks, the knowledge graph)
+          into a real ITIL loop. Everything that happens is recorded, validated by a manager agent,
+          and retrievable. That's the "with receipts" part.
+        </p>
+      </div>
+
+      <div class="diagram-card reveal" style="transition-delay:.1s">
+        <div class="d-cap">The automatic ITIL loop</div>
+        <pre class="mermaid">
+flowchart LR
+    EV["something breaks<br/>(a service goes down)"] --> HEAL["skops tries to fix it<br/>(restart / runbook / agent)"]
+    HEAL -->|fixed| LOG["logged + in the digest"]
+    HEAL -->|can't fix| TICK["opens an Incident<br/>(a tracked ticket)"]
+    TICK -->|keeps happening| PROB["opens a Problem<br/>(find the root cause)"]
+    PROB --> CHG["proposes a Change<br/>(the permanent fix)"]
+    CHG --> CMDB["updates the CMDB<br/>(the map of what you run)"]
+    CMDB --> RPT["daily/weekly digest<br/>&rarr; your phone"]
+        </pre>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── WHAT IS ITIL ─────────────────────────── -->
+  <section id="what-is-itil" aria-labelledby="itil-heading">
+    <div class="container">
+      <div class="reveal">
+        <div class="section-eyebrow">ITIL-101 · for people who've never heard the word</div>
+        <h2 class="section-title" id="itil-heading">What is ITIL? (in plain language)</h2>
+        <p class="section-sub">
+          You don't need to know ITIL to use skops. But here's the whole idea in plain words —
+          then the formal terms, if you're an ops pro.
+        </p>
+      </div>
+
+      <div class="itil-grid">
+        <div class="itil-text reveal">
+          <p>
+            Imagine you run a small shop with some machines in the back. Things break.
+            <strong>ITIL is just a sensible, named way of dealing with "things break"</strong>
+            so nothing falls through the cracks. That's it — it's a vocabulary + a set of habits,
+            not software.
+          </p>
+          <p class="pull">
+            skops gives you those habits automatically. Every term on the right has a skops job
+            attached to it.
+          </p>
+          <p>
+            <strong>"How bad is it?"</strong> is just Priority: <strong>P1</strong> = everything's
+            down · <strong>P4</strong> = mildly annoying. And each ITIL process has a
+            <strong>manager</strong> — a small AI agent with a personality suited to the job — that
+            reviews the automation and asks the uncomfortable questions.
+          </p>
+        </div>
+
+        <div class="reveal" style="transition-delay:.1s">
+          <table class="plain-table" aria-label="Plain English to ITIL terms">
+            <thead>
+              <tr><th>Plain English</th><th>ITIL word</th><th>What skops does</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="plain">"Something broke, deal with it now."</td><td class="itil-word">Incident</td><td>Detects it, tries to auto-fix, opens a ticket if it can't.</td></tr>
+              <tr><td class="plain">"This keeps breaking — why?"</td><td class="itil-word">Problem</td><td>Notices repeated failures, opens an investigation.</td></tr>
+              <tr><td class="plain">"Let's change something, carefully."</td><td class="itil-word">Change</td><td>Proposes the fix with a rollback plan; gets approval before prod.</td></tr>
+              <tr><td class="plain">"A thing we run and care about."</td><td class="itil-word">CI / CMDB</td><td>Keeps a live map of your machines &amp; services.</td></tr>
+              <tr><td class="plain">"Our library of known issues + fixes."</td><td class="itil-word">KEDB</td><td>Remembers every fix so next time it's automatic.</td></tr>
+              <tr><td class="plain">"How are we doing?"</td><td class="itil-word">Reporting</td><td>Sends you a daily/weekly digest.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── THE 3AM STORY ────────────────────────── -->
+  <section id="story" class="gradient-section" aria-labelledby="story-heading">
+    <div class="container">
+      <div class="reveal" style="text-align:center">
+        <div class="section-eyebrow">A story · this is literally what skops does</div>
+        <h2 class="section-title" id="story-heading">The 3am database crash</h2>
+        <p class="section-sub" style="margin:0 auto">
+          No SaaS dashboard. No ticketing license. It ran on your own box —
+          and every step left a record you can read later.
+        </p>
+      </div>
+
+      <div class="story-timeline reveal" style="transition-delay:.1s" role="list" aria-label="3am database crash timeline">
+        <div class="story-step" role="listitem">
+          <div class="story-time">3:02am</div>
+          <div class="story-body">The database health check fails.<span class="tag">an Incident is born</span></div>
+        </div>
+        <div class="story-step fixed" role="listitem">
+          <div class="story-time">3:02am</div>
+          <div class="story-body">skops checks its runbook library: <em>"DB down → restart the container."</em> It restarts it and re-checks health. ✅ Fixed.<span class="tag green">auto-remediation</span></div>
+        </div>
+        <div class="story-step fixed" role="listitem">
+          <div class="story-time">3:02am</div>
+          <div class="story-body">Logged. You're asleep. Nothing pages you.</div>
+        </div>
+        <div class="story-step problem" role="listitem">
+          <div class="story-time">that week</div>
+          <div class="story-body">It happens 3 nights running. skops notices the recurrence and opens a Problem: <em>"why does this DB keep dying at 3am?"</em><span class="tag pink">Problem opened</span></div>
+        </div>
+        <div class="story-step problem" role="listitem">
+          <div class="story-time">next morning</div>
+          <div class="story-body">The Problem Manager agent investigates, finds a backup job starving the DB of memory, and records the root cause.</div>
+        </div>
+        <div class="story-step change" role="listitem">
+          <div class="story-time">the fix</div>
+          <div class="story-body">skops proposes a Change: <em>"stagger the backup, add a memory limit,"</em> with a rollback plan. You approve it from your phone.<span class="tag cyan">Change · with rollback</span></div>
+        </div>
+        <div class="story-step change" role="listitem">
+          <div class="story-time">after</div>
+          <div class="story-body">The Change Manager runs a Post-Implementation Review: did any new incidents follow? No. The CMDB is updated. It goes in the digest.</div>
+        </div>
+      </div>
+
+      <p class="story-footer reveal" style="transition-delay:.2s">
+        Everything above happened on <strong>your hardware</strong>. The records never left your disk.
+        That's the difference between "we restarted it" and "we know it's actually fixed."
+      </p>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── THE SELF-HEAL LOOP ───────────────────── -->
+  <section id="selfheal" aria-labelledby="heal-heading">
+    <div class="container">
+      <div class="reveal">
+        <div class="section-eyebrow">skhealer · "automagically fix it"</div>
+        <h2 class="section-title" id="heal-heading">The self-heal loop</h2>
+        <p class="section-sub">
+          Remediation is <strong>tiered</strong>: L0 a plain restart, L1 a KEDB runbook retrieved
+          by hybrid search, L2 an agent reasoning over the incident + runbook behind a confidence gate.
+          Every successful fix becomes a new runbook — the library grows itself, and the next
+          occurrence resolves one tier cheaper.
+        </p>
+      </div>
+
+      <div class="two-diagram">
+        <div class="diagram-card reveal" style="transition-delay:.05s">
+          <div class="d-cap">skhealer — tiered remediation</div>
+          <pre class="mermaid">
+flowchart TD
+    A["health check fails"] --> B["sk-alert *.critical"]
+    B --> C{"known remediation?"}
+    C -->|"L0 restart"| R["systemd / monit restart"]
+    C -->|"L1 runbook"| RB["KEDB runbook<br/>(hybrid search)"]
+    C -->|"L2 agent"| AG["agent reads incident<br/>+ runbook, confidence gate"]
+    R --> V["verify (doctor.py)"]
+    RB --> V
+    AG --> V
+    V -->|ok| OK["close + grow KEDB"]
+    V -->|still broken| ESC["escalate &rarr; incident + human"]
+    OK -.->|each fix &rarr; new runbook| RB
+          </pre>
+        </div>
+        <div class="diagram-card reveal" style="transition-delay:.1s">
+          <div class="d-cap">A manager governance pass</div>
+          <pre class="mermaid">
+sequenceDiagram
+    participant S as skscheduler
+    participant M as Manager agent
+    participant Q as ITIL store / CMDB
+    participant A as sk-alert / journal
+    S->>M: governance pass due
+    M->>Q: read open records in scope
+    M->>M: apply disposition<br/>(skeptical / root-cause / cautious)
+    M->>Q: verify vs live reality
+    alt looks wrong
+        M->>Q: reclassify / promote / reopen
+        M->>A: alert + journal finding
+    else looks right
+        M->>Q: confirm + close + record evidence
+    end
+          </pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── MANAGER AGENTS ───────────────────────── -->
+  <section id="managers" class="gradient-section" aria-labelledby="mgr-heading">
+    <div class="container">
+      <div class="reveal">
+        <div class="section-eyebrow">The governance layer · soul-driven manager agents</div>
+        <h2 class="section-title" id="mgr-heading">Automation that argues with itself<br>before it trusts itself.</h2>
+        <p class="section-sub">
+          The thing that makes auto-ops <em>trustworthy</em> is that nothing the automation does is
+          taken on faith. Each ITIL process has a <strong>manager agent</strong>: a soul (a disposition
+          that shapes its judgment), a tool scope (the only tools it may use), and a scheduled
+          governance pass. They run <em>after</em> events and ask the uncomfortable questions.
+        </p>
+        <p class="section-sub" style="margin-top:.75rem">
+          <strong style="color:var(--gold)">At L0, one steward wears all the hats.</strong>
+          On a single machine you run the Ops Steward — one pragmatic soul with all the ITIL tools.
+          Level up to split the hats into the five dedicated managers below.
+        </p>
+      </div>
+
+      <div class="mgr-grid">
+
+        <div class="mgr-card steward reveal" style="transition-delay:.05s">
+          <div class="mgr-head">
+            <span class="mgr-icon">🐧</span>
+            <div><div class="mgr-name">Ops Steward</div><div class="mgr-id">ops-steward</div></div>
+            <span class="mgr-badge l0">L0</span>
+          </div>
+          <p class="mgr-soul">Pragmatic, thorough, calm under pressure — one person's worth of ITIL sense. <span class="q">"When in doubt: log it, escalate it, fix it."</span></p>
+          <div class="mgr-meta">
+            <div class="mgr-row"><span class="k">Governs</span><span class="v">Everything (all hats)</span></div>
+            <div class="mgr-row"><span class="k">Tools</span><span class="v">all <code>itil_*</code> + heartbeat / deploy / security + ansible + notify / journal + memory</span></div>
+            <div class="mgr-row"><span class="k">Schedule</span><span class="v">every 15m + daily + weekly</span></div>
+          </div>
+        </div>
+
+        <div class="mgr-card incident reveal" style="transition-delay:.1s">
+          <div class="mgr-head">
+            <span class="mgr-icon">🚨</span>
+            <div><div class="mgr-name">Incident</div><div class="mgr-id">incident-manager</div></div>
+            <span class="mgr-badge l1">L1</span>
+          </div>
+          <p class="mgr-soul">Urgent, skeptical of "resolved." <span class="q">"Was the fix actually verified? Is this CI recurring?"</span></p>
+          <div class="mgr-meta">
+            <div class="mgr-row"><span class="k">Governs</span><span class="v">Validate auto-heals truly fixed it; reclassify severity; promote recurring → Problem</span></div>
+            <div class="mgr-row"><span class="k">Tools</span><span class="v"><code>itil_incident_*</code>, <code>itil_problem_create</code>, <code>heartbeat_health</code>, <code>consciousness_test</code></span></div>
+            <div class="mgr-row"><span class="k">Schedule</span><span class="v"><code>*/15 * * * *</code> — every 15m</span></div>
+          </div>
+        </div>
+
+        <div class="mgr-card problem reveal" style="transition-delay:.15s">
+          <div class="mgr-head">
+            <span class="mgr-icon">🔍</span>
+            <div><div class="mgr-name">Problem</div><div class="mgr-id">problem-manager</div></div>
+            <span class="mgr-badge l1">L1</span>
+          </div>
+          <p class="mgr-soul">Analytical, root-cause-obsessed. Never satisfied with "we restarted it." <span class="q">"WHY did it fail?"</span></p>
+          <div class="mgr-meta">
+            <div class="mgr-row"><span class="k">Governs</span><span class="v">Drive RCA; ensure every known-error has a KEDB runbook; validate Problem → Change; track MTTR</span></div>
+            <div class="mgr-row"><span class="k">Tools</span><span class="v"><code>itil_problem_create</code>, <code>itil_kedb_search</code>, <code>itil_change_propose</code>, <code>memory_*</code></span></div>
+            <div class="mgr-row"><span class="k">Schedule</span><span class="v"><code>0 9 * * *</code> — daily 09:00</span></div>
+          </div>
+        </div>
+
+        <div class="mgr-card change reveal" style="transition-delay:.2s">
+          <div class="mgr-head">
+            <span class="mgr-icon">🛡️</span>
+            <div><div class="mgr-name">Change</div><div class="mgr-id">change-manager</div></div>
+            <span class="mgr-badge l1">L1</span>
+          </div>
+          <p class="mgr-soul">Cautious, governance-minded. <span class="q">"Every change needs a rollback plan. PIR is not optional."</span></p>
+          <div class="mgr-meta">
+            <div class="mgr-row"><span class="k">Governs</span><span class="v">Review changes for completeness (rollback / test plan); run CAB; Post-Implementation Review; correlate changes → incidents</span></div>
+            <div class="mgr-row"><span class="k">Tools</span><span class="v"><code>itil_change_*</code>, <code>itil_cab_vote</code>, <code>itil_incident_list</code>, <code>run_ansible_playbook</code></span></div>
+            <div class="mgr-row"><span class="k">Schedule</span><span class="v"><code>0 10 * * 1</code> — weekly Mon 10:00</span></div>
+          </div>
+        </div>
+
+        <div class="mgr-card config reveal" style="transition-delay:.25s">
+          <div class="mgr-head">
+            <span class="mgr-icon">🗺️</span>
+            <div><div class="mgr-name">Config / CMDB</div><div class="mgr-id">config-manager</div></div>
+            <span class="mgr-badge l1">L1</span>
+          </div>
+          <p class="mgr-soul">Meticulous, accuracy-obsessed. <span class="q">"The CMDB is the truth — stale CIs are lies."</span></p>
+          <div class="mgr-meta">
+            <div class="mgr-row"><span class="k">Governs</span><span class="v"><code>cmdb_sync</code> from sources; drift audit (CMDB vs heartbeat); reconcile orphaned / stale CIs; flag new services</span></div>
+            <div class="mgr-row"><span class="k">Tools</span><span class="v"><code>heartbeat_{peers,health}</code>, <code>deploy_status</code>, <code>consciousness_status</code>, <code>security_status</code></span></div>
+            <div class="mgr-row"><span class="k">Schedule</span><span class="v"><code>*/30 * * * *</code> — every 30m</span></div>
+          </div>
+        </div>
+
+        <div class="mgr-card report reveal" style="transition-delay:.3s">
+          <div class="mgr-head">
+            <span class="mgr-icon">📈</span>
+            <div><div class="mgr-name">Report / Service</div><div class="mgr-id">report-manager</div></div>
+            <span class="mgr-badge l1">L1</span>
+          </div>
+          <p class="mgr-soul">Communicative, trend-aware. Translates ops data into human language.</p>
+          <div class="mgr-meta">
+            <div class="mgr-row"><span class="k">Governs</span><span class="v">Compile daily / weekly digest from <code>service_health</code> + <code>itil_status</code>; MTTR / availability / SLA; deliver via SKAlert</span></div>
+            <div class="mgr-row"><span class="k">Tools</span><span class="v"><code>itil_status</code>, <code>heartbeat_health</code>, <code>security_status</code>, <code>emotion_trend</code>, <code>send_notification</code></span></div>
+            <div class="mgr-row"><span class="k">Schedule</span><span class="v"><code>0 8 * * *</code> — daily 08:00</span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="why-souls reveal">
+        <h3>Why souls (not just cron jobs)?</h3>
+        <p>
+          A cron job runs a script. A <strong>manager agent</strong> reads the situation and judges
+          it through a consistent disposition — the Incident Manager is built to distrust "it's fine
+          now," so it re-checks; the Change Manager is built to refuse changes without a rollback, so
+          it flags them. The disposition is the control: it's how you get
+          <strong>automation that argues with itself before it trusts itself.</strong>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── LEVELS ───────────────────────────────── -->
+  <section id="levels" aria-labelledby="levels-heading">
+    <div class="container">
+      <div class="reveal">
+        <div class="section-eyebrow">Light by default · leveled to enterprise</div>
+        <h2 class="section-title" id="levels-heading">Starts on a laptop. Scales to an enterprise.</h2>
+        <p class="section-sub">
+          skops runs the <strong>same model</strong> at every scale — you just turn on more of it.
+          Start at L0 on one box; grow to L3 across a compliance-bound enterprise without
+          re-architecting. Every level is the same ITIL loop and the same manager souls — only the
+          adapters and the number of split-out agents change.
+        </p>
+      </div>
+
+      <div class="levels-table-wrap reveal" style="transition-delay:.1s">
+        <table class="levels-table" aria-label="skops leveling matrix L0 to L3">
+          <thead>
+            <tr><th>Level</th><th>Context</th><th>Monitoring</th><th>ITIL scope</th><th>Managers</th><th>CMDB</th><th>ITSM</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="lvl l0">L0 — laptop</td>
+              <td>one person / machine</td>
+              <td>systemd + monit, auto-restart, weekly digest</td>
+              <td>minimal (alerts only)</td>
+              <td>one "Ops Steward" wears all hats</td>
+              <td>AGE graph</td>
+              <td>native</td>
+            </tr>
+            <tr>
+              <td class="lvl l1">L1 — home</td>
+              <td>1–5 machines</td>
+              <td>+ Gatus + Healthchecks</td>
+              <td>incident + problem, standard changes</td>
+              <td>5 managers split out</td>
+              <td>AGE (+ NetBox opt)</td>
+              <td>native (+ Icinga ingest)</td>
+            </tr>
+            <tr>
+              <td class="lvl l2">L2 — work</td>
+              <td>team / prod</td>
+              <td>+ skmon opt-in</td>
+              <td>+ normal changes, async CAB, SLAs</td>
+              <td>full manager team</td>
+              <td>NetBox / iTop</td>
+              <td>iTop or Freshservice</td>
+            </tr>
+            <tr>
+              <td class="lvl l3">L3 — enterprise</td>
+              <td>multi-team / compliance</td>
+              <td>full observability</td>
+              <td>full ITIL, ECAB, PIR, audit trail</td>
+              <td>full team + SLA roles</td>
+              <td>iTop / ServiceNow</td>
+              <td>ServiceNow / Freshservice</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="levels-note reveal" style="transition-delay:.15s">
+        <strong>Just me, one box?</strong> → L0: <code style="font-family:var(--mono);color:var(--gold)">skops status</code>, auto-restart, a weekly digest to Telegram.
+        Nothing else to configure. <strong>A few machines at home?</strong> → L1. <strong>A team in production?</strong> → L2.
+        <strong>Enterprise / compliance?</strong> → L3. You never rewrite anything to grow.
+      </p>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── MONITORING + ADAPTERS ────────────────── -->
+  <section id="adapters" class="gradient-section" aria-labelledby="adapters-heading">
+    <div class="container">
+      <div class="reveal">
+        <div class="section-eyebrow">Ports &amp; adapters · every axis swappable</div>
+        <h2 class="section-title" id="adapters-heading">Monitoring in, action out — your tools.</h2>
+        <p class="section-sub">
+          skops has a <strong>port</strong> for each axis and adapters behind it. Add a new backend by
+          implementing the port — nothing else changes. Your monitoring feeds the loop; your ITSM and
+          CMDB hold the state; remediation escalates from a restart to an agent.
+        </p>
+      </div>
+
+      <div class="axis-grid">
+
+        <div class="axis-card reveal" style="transition-delay:.05s">
+          <div class="axis-head"><span class="axis-icon">📡</span><div><div class="axis-name">Monitoring</div><div class="axis-port">events → sk-alert bus</div></div></div>
+          <div class="axis-prog">
+            <div class="axis-step"><span class="axis-lvl a0">L0</span><span class="axis-tech">systemd OnFailure, monit</span></div>
+            <div class="axis-step"><span class="axis-lvl a1">L1</span><span class="axis-tech">Gatus, Healthchecks</span></div>
+            <div class="axis-step"><span class="axis-lvl a2">L2</span><span class="axis-tech">skmon, Netdata, Icinga ingest</span></div>
+            <div class="axis-step"><span class="axis-lvl a3">L3</span><span class="axis-tech">full observability</span></div>
+          </div>
+        </div>
+
+        <div class="axis-card reveal" style="transition-delay:.1s">
+          <div class="axis-head"><span class="axis-icon">🎟️</span><div><div class="axis-name">ITSM</div><div class="axis-port">ITSMPort interface</div></div></div>
+          <div class="axis-prog">
+            <div class="axis-step"><span class="axis-lvl a0">L0</span><span class="axis-tech">native ITIL store</span></div>
+            <div class="axis-step"><span class="axis-lvl a1">L1</span><span class="axis-tech">+ Icinga / Nagios ingest</span></div>
+            <div class="axis-step"><span class="axis-lvl a2">L2</span><span class="axis-tech">iTop, Freshservice</span></div>
+            <div class="axis-step"><span class="axis-lvl a3">L3</span><span class="axis-tech">ServiceNow, Freshservice</span></div>
+          </div>
+        </div>
+
+        <div class="axis-card reveal" style="transition-delay:.15s">
+          <div class="axis-head"><span class="axis-icon">🗺️</span><div><div class="axis-name">CMDB</div><div class="axis-port">graph of what you run</div></div></div>
+          <div class="axis-prog">
+            <div class="axis-step"><span class="axis-lvl a0">L0</span><span class="axis-tech">AGE graph (skmem-pg)</span></div>
+            <div class="axis-step"><span class="axis-lvl a1">L1</span><span class="axis-tech">AGE (+ NetBox opt)</span></div>
+            <div class="axis-step"><span class="axis-lvl a2">L2</span><span class="axis-tech">NetBox, iTop</span></div>
+            <div class="axis-step"><span class="axis-lvl a3">L3</span><span class="axis-tech">iTop, ServiceNow</span></div>
+          </div>
+        </div>
+
+        <div class="axis-card reveal" style="transition-delay:.2s">
+          <div class="axis-head"><span class="axis-icon">🩺</span><div><div class="axis-name">Remediation</div><div class="axis-port">skhealer dispatcher</div></div></div>
+          <div class="axis-prog">
+            <div class="axis-step"><span class="axis-lvl a0">L0</span><span class="axis-tech">systemd / monit restart</span></div>
+            <div class="axis-step"><span class="axis-lvl a1">L1</span><span class="axis-tech">skhealer + KEDB runbooks</span></div>
+            <div class="axis-step"><span class="axis-lvl a2">L2</span><span class="axis-tech">agent reasoning (gate)</span></div>
+            <div class="axis-step"><span class="axis-lvl a3">L3</span><span class="axis-tech">StackStorm (&gt;10 runbooks)</span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="margin-top:3rem;text-align:center" class="reveal">
+        <div class="section-eyebrow" style="margin-bottom:1rem">The CMDB lives in the AGE graph — one shared truth</div>
+        <p class="section-sub" style="margin:0 auto 0">
+          <code style="font-family:var(--mono);color:var(--gold)">cmdb_sync</code> MERGEs Configuration Items
+          (Host · Service · Application · Agent) from live sources — service registry, heartbeat peers,
+          app.yaml, the skingest GPU cluster — into the AGE graph in skmem-pg. The Config Manager
+          continuously audits the graph against reality and reconciles drift. KEDB runbooks index into
+          the same Postgres (pgvector + mxbai), retrieved by <code style="font-family:var(--mono);color:var(--gold)">hybrid_search_docs</code>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── WORKFLOWS ────────────────────────────── -->
+  <section id="workflows" aria-labelledby="wf-heading">
+    <div class="container">
+      <div class="reveal">
+        <div class="section-eyebrow">Real-world walkthroughs</div>
+        <h2 class="section-title" id="wf-heading">End-to-end, with the exact tools.</h2>
+        <p class="section-sub">
+          The canonical loop: a service dies; skops fixes it, notices it keeps happening, finds the
+          cause, and ships the permanent fix — most of it while you sleep.
+        </p>
+      </div>
+
+      <div class="diagram-card reveal" style="transition-delay:.1s">
+        <div class="d-cap">Incident → auto-heal → problem → change (the full loop)</div>
+        <pre class="mermaid">
+sequenceDiagram
+    participant Mon as Gatus
+    participant Heal as skhealer
+    participant KEDB as KEDB
+    participant IM as Incident Mgr
+    participant PM as Problem Mgr
+    participant CM as Change Mgr
+    participant You as Operator
+    Mon->>Heal: db.health = down (critical)
+    Heal->>KEDB: itil_kedb_search("db down")
+    KEDB-->>Heal: runbook: "restart skmem-pg"
+    Heal->>Heal: restart &rarr; doctor verify ✅
+    Note over IM: every 15m governance pass
+    IM->>PM: 3rd same-CI failure &rarr; promote
+    PM->>PM: RCA — backup starves DB memory
+    PM->>CM: propose CHANGE (stagger + mem limit)
+    CM->>You: CAB vote + rollback plan
+    You-->>CM: approve
+    CM->>CM: ansible apply &rarr; PIR (clean) ✅
+        </pre>
+      </div>
+
+      <div class="two-diagram">
+        <div class="diagram-card reveal" style="transition-delay:.05s">
+          <div class="d-cap">CMDB drift detection (Config Mgr, every 30m)</div>
+          <pre class="mermaid">
+sequenceDiagram
+    participant CFG as Config Mgr
+    participant SRC as live sources
+    participant AGE as AGE CMDB
+    participant Bus as sk-alert
+    CFG->>SRC: gather live state
+    CFG->>AGE: cmdb_sync.sync_all()
+    CFG->>AGE: drift_audit()
+    alt CI in CMDB, host dead
+        CFG->>Bus: alert: stale / orphaned CI
+    else live service not in CMDB
+        CFG->>AGE: add new Service CI
+        CFG->>Bus: alert: untracked service
+    end
+          </pre>
+        </div>
+        <div class="diagram-card reveal" style="transition-delay:.1s">
+          <div class="d-cap">Change types — how approval routes</div>
+          <pre class="mermaid">
+flowchart TD
+    C["change proposed"] --> T{type?}
+    T -->|Standard| AUTO["auto-approve"]
+    T -->|Normal| CAB["CAB vote on coord board"]
+    T -->|Emergency| ECAB["ECAB &rarr; retro-review"]
+    AUTO --> PIR["Post-Impl Review"]
+    CAB --> PIR
+    ECAB --> PIR
+    PIR -->|caused incidents?| RB["rollback"]
+    PIR -->|clean| DONE["close + CMDB update"]
+          </pre>
+        </div>
+      </div>
+
+      <!-- Onboarding intents -->
+      <div class="reveal" style="margin-top:2.5rem">
+        <table class="plain-table" aria-label="skguide onboarding intents">
+          <thead><tr><th>You say…</th><th>skops does…</th></tr></thead>
+          <tbody>
+            <tr><td class="plain">"something broke"</td><td>open / auto-heal an <span class="itil-word">Incident</span></td></tr>
+            <tr><td class="plain">"it keeps breaking"</td><td>open a <span class="itil-word">Problem</span> (RCA)</td></tr>
+            <tr><td class="plain">"change something safely"</td><td>propose a <span class="itil-word">Change</span> (with rollback + approval)</td></tr>
+            <tr><td class="plain">"what do we run?"</td><td>query the <span class="itil-word">CMDB</span></td></tr>
+            <tr><td class="plain">"what are the known issues?"</td><td>search the <span class="itil-word">KEDB</span></td></tr>
+            <tr><td class="plain">"how are we doing?"</td><td>run a <span class="itil-word">Report</span> / digest</td></tr>
+          </tbody>
+        </table>
+        <p style="text-align:center;color:var(--dim);margin-top:1rem;font-size:.9rem">
+          For people who don't speak ITIL, <strong style="color:rgba(255,255,255,.75)">skguide</strong> maps plain intents onto these flows.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── QUICKSTART ───────────────────────────── -->
+  <section aria-label="Quickstart">
+    <div class="container" style="text-align:center">
+      <div class="reveal">
+        <div class="section-eyebrow">Quickstart</div>
+        <h2 class="section-title">Light by default. Five lines in.</h2>
+        <p class="section-sub" style="margin:0 auto">
+          skops installs into the <code style="font-family:var(--mono);color:var(--gold)">~/.skenv</code> venv
+          and runs at L0 out of the box: one machine, one Ops Steward, auto-restarts + a digest.
+        </p>
+      </div>
+
+      <div class="quickstart reveal" style="transition-delay:.1s" role="img" aria-label="skops quickstart commands">
+        <div class="term-bar"><div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div><span class="term-title">~/ — bash</span></div>
+        <div class="term-body">
+          <div><span class="t-prompt">$ </span><span class="t-cmd">pip install -e .</span><span class="t-comment"> &nbsp;# into the ~/.skenv venv</span></div>
+          <div><span class="t-prompt">$ </span><span class="t-cmd">skops status</span><span class="t-comment"> &nbsp;# current ITIL + health snapshot</span></div>
+          <div><span class="t-prompt">$ </span><span class="t-cmd">skops managers list</span><span class="t-comment"> &nbsp;# L0 Ops Steward by default</span></div>
+          <div><span class="t-prompt">$ </span><span class="t-cmd">skops cmdb sync</span><span class="t-comment"> &nbsp;# populate the CMDB from live sources</span></div>
+          <div><span class="t-prompt">$ </span><span class="t-cmd">skops cmdb drift</span><span class="t-comment"> &nbsp;# audit: CMDB vs reality</span></div>
+          <br>
+          <div class="t-bold">✅ Running at L0 — auto-restart on failure, weekly digest to your phone.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── WHERE SKOPS LIVES ────────────────────── -->
+  <section id="ecosystem" class="gradient-section" aria-labelledby="eco-heading">
+    <div class="container" style="text-align:center">
+      <div class="reveal">
+        <div class="section-eyebrow">Where skops lives in SKStack v2</div>
+        <h2 class="section-title" id="eco-heading">A Core capability of SKWorld</h2>
+        <p class="section-sub" style="margin:0 auto 1rem">
+          skops is a <strong>Core</strong> capability. It consumes signals from the <strong>Compute</strong>
+          tier (monitoring + model reasoning) and writes its state into <strong>Data</strong>
+          (the AGE graph = CMDB · pgvector = KEDB / runbooks), orchestrated by shared platform services.
+        </p>
+      </div>
+
+      <div class="where-tiers reveal" style="transition-delay:.1s">
+        <div class="where-tier core">
+          <h4>Core · governance &amp; identity</h4>
+          <div class="ci hero">🐧 skops <span style="font-weight:400;color:var(--dim);font-size:.78rem">ITIL flow · self-heal · CMDB · managers</span></div>
+          <div class="ci"><code>capauth</code> — identity</div>
+          <div class="ci"><code>skmemory</code> — memory</div>
+        </div>
+        <div class="where-tier">
+          <h4>Compute</h4>
+          <div class="ci"><code>skmon</code> / Gatus / Icinga — monitoring</div>
+          <div class="ci"><code>skmodel</code> (Ollama) — agent reasoning</div>
+        </div>
+        <div class="where-tier">
+          <h4>Data</h4>
+          <div class="ci"><code>skdata</code> → skmem-pg</div>
+          <div class="ci">AGE graph = <strong style="color:rgba(255,255,255,.8)">CMDB</strong></div>
+          <div class="ci">pgvector = <strong style="color:rgba(255,255,255,.8)">KEDB</strong> / runbooks</div>
+        </div>
+        <div class="where-tier">
+          <h4>Platform services</h4>
+          <div class="ci"><code>skscheduler</code> — governance jobs</div>
+          <div class="ci"><code>sk-alert</code> — bus + digests</div>
+          <div class="ci">coord board — ITIL store</div>
+          <div class="ci"><code>skguide</code> — ops onboarding</div>
+        </div>
+      </div>
+
+      <div class="reveal" style="margin-top:3rem">
+        <div class="section-eyebrow" style="margin-bottom:1rem">Explore the SKWorld family</div>
+        <div class="eco-grid">
+          <a href="https://skos.skworld.io" class="eco-link feature" target="_blank" rel="noopener">🧩 skos — the agent OS</a>
+          <a href="https://skingest.skworld.io" class="eco-link feature" target="_blank" rel="noopener">📥 skingest — ingestion</a>
+          <a href="https://skworld.io" class="eco-link" target="_blank" rel="noopener">🌍 skworld.io</a>
+          <a href="https://skcapstone.io" class="eco-link" target="_blank" rel="noopener">🏗️ skcapstone.io</a>
+          <a href="https://sksecurity.io" class="eco-link" target="_blank" rel="noopener">🛡️ sksecurity.io</a>
+          <a href="https://capauth.io" class="eco-link" target="_blank" rel="noopener">🔐 capauth.io</a>
+          <a href="https://skmemory.io" class="eco-link" target="_blank" rel="noopener">🧠 skmemory.io</a>
+          <a href="https://github.com/smilinTux/skops" class="eco-link" target="_blank" rel="noopener">📦 GitHub</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── FINAL CTA ───────────────────────────── -->
+  <section class="cta-section" aria-labelledby="cta-heading">
+    <div class="container" style="text-align:center">
+      <div class="reveal">
+        <div style="font-size:3rem;margin-bottom:1rem">🐧</div>
+        <h2 id="cta-heading">Ops that fixes itself — and tells you why.</h2>
+        <p style="color:var(--dim);margin:.75rem auto 2.5rem;max-width:540px;font-size:1.05rem">
+          Self-healing, self-documenting, on your own hardware. We speak ITIL — with receipts.
+        </p>
+        <div class="hero-ctas">
+          <a href="https://github.com/smilinTux/skops" class="btn btn-primary" target="_blank" rel="noopener">⭐ Star on GitHub</a>
+          <a href="https://github.com/smilinTux/skops/blob/main/docs/ITIL-101.md" class="btn btn-outline" target="_blank" rel="noopener">📖 Read ITIL-101</a>
+          <a href="https://skworld.io" class="btn btn-ghost" target="_blank" rel="noopener">🌍 Explore SKWorld</a>
+        </div>
+        <p style="margin-top:2rem;font-family:var(--mono);font-size:.85rem;color:rgba(255,215,0,.6)">
+          "staycuriousANDkeepsmilin" 🐧
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ──────────────────────────────── -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-links" role="list" aria-label="Ecosystem links">
+          <a href="https://skworld.io" role="listitem">🌍 SKWorld</a>
+          <a href="https://skos.skworld.io" role="listitem">🧩 skos</a>
+          <a href="https://skingest.skworld.io" role="listitem">📥 skingest</a>
+          <a href="https://skcapstone.io" role="listitem">🏗️ SKCapstone</a>
+          <a href="https://sksecurity.io" role="listitem">🛡️ SKSecurity</a>
+          <a href="https://capauth.io" role="listitem">🔐 CapAuth</a>
+          <a href="https://skmemory.io" role="listitem">🧠 SKMemory</a>
+          <a href="https://github.com/smilinTux/skops" role="listitem">📦 GitHub</a>
+          <a href="https://smilintux.org" role="listitem">🐧 smilinTux</a>
+        </div>
+        <div class="footer-copy">
+          &copy; 2026 SKWorld · Sovereign Technology for Creators ·
+          <span>staycuriousANDkeepsmilin</span> ·
+          GPL-3.0 · <a href="https://github.com/smilinTux" style="color:var(--dim)">smilinTux</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ── Mermaid ─────────────────────────────── -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: 'base',
+        themeVariables: {
+          primaryColor: '#14152e',
+          primaryTextColor: '#ffffff',
+          primaryBorderColor: '#FFD700',
+          lineColor: '#00FFFF',
+          secondaryColor: '#1a1a3e',
+          tertiaryColor: '#0f1020',
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: '13px',
+          actorBkg: '#14152e',
+          actorBorder: '#FFD700',
+          actorTextColor: '#ffffff',
+          signalColor: '#00FFFF',
+          signalTextColor: '#FFD700',
+          noteBkgColor: '#1a1a3e',
+          noteTextColor: '#FF69B4',
+          noteBorderColor: '#FF69B4'
+        }
+      });
+    }
+  </script>
+
+  <!-- ── Scripts ─────────────────────────────── -->
+  <script>
+    function copyInstall() {
+      const cmd = 'pip install -e . && skops status';
+      navigator.clipboard.writeText(cmd).then(() => {
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+          const orig = btn.textContent;
+          btn.textContent = '✓ copied';
+          btn.classList.add('copied');
+          setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+        });
+      }).catch(() => {
+        const el = document.getElementById('install-cmd-text');
+        if (el) {
+          const range = document.createRange();
+          range.selectNode(el);
+          window.getSelection().removeAllRanges();
+          window.getSelection().addRange(range);
+        }
+      });
+    }
+
+    (function() {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+      }, { threshold: 0.08 });
+      document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    })();
+
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
+    });
+  </script>
+
+</body>
+</html>

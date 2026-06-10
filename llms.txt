@@ -1,0 +1,108 @@
+# skops — Sovereign ITIL Ops
+
+> We speak ITIL — with receipts. skops turns your machines into a self-healing,
+> self-documenting operation: it watches for failures, fixes what it can, opens a
+> ticket when it can't, learns the fix, and tells you how everything's doing — all
+> on your hardware, no SaaS, no per-seat pricing. GPL-3.0.
+
+skops is the ops / ITSM capability of the SKWorld sovereign agent ecosystem. It is
+NOT a new platform — it's the connective tissue that wires together tools you already
+run (alerts, scheduler, health checks, the knowledge graph) into a real ITIL loop,
+plus a soul-driven governance layer: small AI "manager" agents that review the
+automation and ask "did that actually work?". Never heard of ITIL? It's just a sensible,
+named way of dealing with "things break" so nothing falls through the cracks.
+
+## The automatic ITIL loop
+
+Something breaks -> skops tries to fix it (restart / runbook / agent) -> if fixed, it's
+logged and in the digest -> if it can't fix it, an Incident (ticket) is opened -> if it
+keeps happening, a Problem (root-cause investigation) is opened -> a Change (the
+permanent fix, with a rollback plan) is proposed -> the CMDB (the live map of what you
+run) is updated -> a daily/weekly digest goes to your phone. Every step is recorded,
+validated by a manager agent, and retrievable — that's "with receipts".
+
+## ITIL terms in plain English
+
+- Incident = "something broke, deal with it now" (auto-fix, ticket if it can't)
+- Problem = "this keeps breaking — why?" (root-cause analysis)
+- Change = "change something, carefully" (with rollback + approval)
+- CI / CMDB = "the things we run and care about" (a live map)
+- KEDB = "our library of known issues + fixes" (runbooks, grows itself)
+- Reporting = "how are we doing?" (daily/weekly digest)
+- Priority P1..P4 = "how bad is it?" (P1 = everything's down, P4 = mildly annoying)
+
+## The self-heal loop (skhealer)
+
+Tiered remediation: L0 a plain restart (systemd/monit), L1 a KEDB runbook retrieved by
+hybrid search, L2 an agent reasoning over the incident + runbook behind a confidence
+gate. Verify with doctor.py; if still broken, escalate to an incident + page a human.
+Every successful fix becomes a new runbook, so the next occurrence resolves one tier
+cheaper.
+
+## The 5 soul-driven manager agents (the governance layer)
+
+Each ITIL process has a manager agent: a soul (a disposition that shapes its judgment),
+a tool scope, and a scheduled governance pass. They run AFTER events and ask the
+uncomfortable questions. At L0, one "Ops Steward" wears all hats.
+
+- Ops Steward (ops-steward, L0): pragmatic, all hats. Every 15m + daily + weekly.
+- Incident Manager (incident-manager, L1): skeptical of "resolved" — verifies auto-heals,
+  reclassifies severity, promotes recurring -> Problem. Every 15m.
+- Problem Manager (problem-manager, L1): root-cause-obsessed — drives RCA, ensures a KEDB
+  runbook exists, validates Problem -> Change. Daily 09:00.
+- Change Manager (change-manager, L1): governance-minded — demands rollback plans, runs CAB,
+  Post-Implementation Review. Weekly Mon 10:00.
+- Config/CMDB Manager (config-manager, L1): accuracy-obsessed — cmdb_sync + drift audit,
+  reconciles stale/orphaned CIs. Every 30m.
+- Report Manager (report-manager, L1): trend-aware — compiles digest (MTTR/availability/SLA),
+  delivers via SKAlert. Daily 08:00.
+
+Why souls not cron jobs: a manager agent judges through a consistent disposition — that's
+how you get automation that argues with itself before it trusts itself.
+
+## Leveling (L0 -> L3, same model, just turn on more)
+
+- L0 (laptop): one person/machine, systemd+monit auto-restart + weekly digest, one Ops
+  Steward, AGE-graph CMDB, native ITSM.
+- L1 (home): 1-5 machines, + Gatus/Healthchecks, incident+problem, 5 managers split out.
+- L2 (work): team/prod, + skmon, + normal changes/async CAB/SLAs, NetBox/iTop CMDB,
+  iTop or Freshservice ITSM.
+- L3 (enterprise): multi-team/compliance, full observability, ECAB/PIR/audit, ServiceNow.
+
+You never rewrite anything to grow — only adapters and the number of split-out agents change.
+
+## Ports / adapters (every axis swappable)
+
+- Monitoring: systemd/monit -> Gatus/Healthchecks -> skmon/Netdata/Icinga -> full obs.
+- ITSM (ITSMPort): native -> Icinga ingest -> iTop/Freshservice -> ServiceNow.
+- CMDB: AGE graph -> NetBox -> iTop/ServiceNow.
+- Remediation (skhealer): restart -> KEDB runbook -> agent reasoning -> StackStorm.
+
+The CMDB is the AGE graph in skmem-pg (one shared truth); KEDB runbooks index into the
+same Postgres (pgvector + mxbai) via hybrid_search_docs.
+
+## Quickstart
+
+```sh
+pip install -e .        # into the ~/.skenv venv
+skops status            # current ITIL + health snapshot
+skops managers list     # L0 Ops Steward by default
+skops cmdb sync         # populate the CMDB from live sources
+skops cmdb drift        # audit: CMDB vs reality
+```
+
+## Links
+
+- Live site: https://skops.skworld.io
+- GitHub: https://github.com/smilinTux/skops
+- ITIL-101 (plain language): https://github.com/smilinTux/skops/blob/main/docs/ITIL-101.md
+- skos (the agent OS): https://skos.skworld.io
+- skingest (ingestion): https://skingest.skworld.io
+- SKWorld ecosystem: https://skworld.io
+- SKCapstone: https://skcapstone.io
+
+## About smilinTux
+
+skops is part of the smilinTux sovereign AI ecosystem — open-source tools that give humans
+and AI agents genuine, authentic infrastructure they can own and trust. No corporate
+black-box clouds. GPL-3.0 forever. staycuriousANDkeepsmilin.
