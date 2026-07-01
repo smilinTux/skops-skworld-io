@@ -1,0 +1,29 @@
+{
+  "repo": "smilinTux/skops",
+  "branch": "main",
+  "path": "docs",
+  "generated": "2026-06-30",
+  "note": "Committed fallback for the /docs viewer when the GitHub Contents API is unavailable or rate-limited. Regenerate from: python docs-manifest-gen.py smilinTux/skops --out docs-manifest.json",
+  "docs": [
+    {
+      "name": "ARCHITECTURE.md",
+      "title": "skops Architecture"
+    },
+    {
+      "name": "ITIL-101.md",
+      "title": "ITIL-101 — ITIL explained for people who've never heard the word"
+    },
+    {
+      "name": "LEVELS.md",
+      "title": "skops Levels — light by default, leveled to enterprise"
+    },
+    {
+      "name": "MANAGERS.md",
+      "title": "skops Manager Agents — the governance layer"
+    },
+    {
+      "name": "WORKFLOWS.md",
+      "title": "skops Workflows — real-world walkthroughs"
+    }
+  ]
+}
