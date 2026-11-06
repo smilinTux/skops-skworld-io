@@ -601,6 +601,7 @@
         <li><a href="#managers">Managers</a></li>
         <li><a href="#levels">Levels</a></li>
         <li><a href="#workflows">Workflows</a></li>
+        <li><a href="#architecture">Architecture</a></li>
         <li><a href="#ecosystem">Ecosystem</a></li>
         <li><a href="/docs.html">Docs</a></li>
         <li><a href="https://github.com/smilinTux/skops" target="_blank" rel="noopener">GitHub</a></li>
@@ -1201,6 +1202,34 @@ flowchart TD
         <p style="text-align:center;color:var(--dim);margin-top:1rem;font-size:.9rem">
           For people who don't speak ITIL, <strong style="color:rgba(255,255,255,.75)">skguide</strong> maps plain intents onto these flows.
         </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── ARCHITECTURE (interactive) ───────────── -->
+  <section id="architecture" aria-labelledby="architecture-heading">
+    <div class="container">
+      <div class="reveal">
+        <div class="section-eyebrow">Explorable architecture</div>
+        <h2 class="section-title" id="architecture-heading">The whole system, as a map you can open.</h2>
+        <p class="section-sub">
+          The diagrams above are static snapshots. This one is alive: pan, zoom, toggle dark/light,
+          and click through every component and connection in the self-heal loop, the manager-agent
+          governance layer, and the CMDB/KEDB substrate.
+        </p>
+      </div>
+
+      <div class="diagram-card reveal" style="transition-delay:.1s">
+        <div class="d-cap">skops component map (interactive)</div>
+        <p style="text-align:center;margin:0 0 1.25rem;color:var(--dim)">
+          Monitoring in, skhealer and itil_flow in the middle, the manager agents and the AGE/KEDB
+          layer underneath. Opens in a new tab, no install required.
+        </p>
+        <div style="text-align:center">
+          <a href="diagrams/skops.architecture.html" class="btn btn-outline" target="_blank" rel="noopener">🗺️ Open the interactive architecture map ↗</a>
+        </div>
       </div>
     </div>
   </section>
