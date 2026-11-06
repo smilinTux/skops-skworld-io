@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "skops Architecture",
+    "subtitle": "The automatic ITIL loop, the self-heal dispatcher, and the governance layer that feeds the CMDB graph",
+    "output": "skops.architecture.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    { "id": "monitor", "type": "external", "label": "Monitoring adapters", "sublabel": "systemd, monit, Gatus, Healthchecks, Icinga", "pos": [100, 100], "size": [220, 74] },
+    { "id": "bus", "type": "messagebus", "label": "sk-alert bus", "sublabel": "failure + state events", "pos": [470, 100], "size": [180, 74] },
+    { "id": "coord", "type": "database", "label": "ITIL coord store", "sublabel": "incidents, problems, changes", "pos": [800, 100], "size": [200, 78] },
+    { "id": "itsm", "type": "external", "label": "ITSM / CMDB tier", "sublabel": "iTop, Freshservice, ServiceNow, NetBox", "pos": [1150, 100], "size": [220, 78] },
+    { "id": "healer", "type": "backend", "label": "skhealer", "sublabel": "self-heal dispatcher, L0 restart to L2 agent", "pos": [100, 240], "size": [220, 78], "tag": "auto-remediate" },
+    { "id": "flow", "type": "backend", "label": "itil_flow", "sublabel": "orchestrator: fires state transitions", "pos": [470, 240], "size": [200, 78] },
+    { "id": "operator", "type": "external", "label": "Operator", "sublabel": "daily and weekly digest", "pos": [1150, 240], "size": [190, 74] },
+    { "id": "scheduler", "type": "backend", "label": "skscheduler", "sublabel": "runs each governance pass", "pos": [100, 460], "size": [200, 74] },
+    { "id": "managers", "type": "backend", "label": "Manager agents", "sublabel": "5 soul-driven governance roles", "pos": [470, 460], "size": [210, 78], "tag": "soul + brain" },
+    { "id": "cmdbsync", "type": "backend", "label": "cmdb_sync", "sublabel": "MERGEs CIs, runs drift_audit", "pos": [830, 460], "size": [200, 78] },
+    { "id": "age", "type": "database", "label": "AGE graph", "sublabel": "CMDB substrate, in skmem-pg", "pos": [470, 650], "size": [200, 78] },
+    { "id": "kedb", "type": "database", "label": "KEDB runbooks", "sublabel": "pgvector + mxbai, in skmem-pg", "pos": [830, 650], "size": [200, 78] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Event and self-heal loop", "wraps": ["monitor", "bus", "healer", "flow", "coord"], "pad": 28 },
+    { "kind": "region", "label": "Governance and CMDB layer", "wraps": ["scheduler", "managers", "cmdbsync", "age", "kedb"], "pad": 28 }
+  ],
+  "connections": [
+    { "id": "monitor-bus", "from": "monitor", "to": "bus", "label": "health check fails", "variant": "default" },
+    { "id": "bus-healer", "from": "bus", "to": "healer", "label": "dispatch", "variant": "default" },
+    { "id": "healer-kedb", "from": "healer", "to": "kedb", "label": "itil_kedb_search (L1 runbook)", "variant": "default" },
+    { "id": "healer-coord", "from": "healer", "to": "coord", "label": "can't fix: open incident", "variant": "emphasis" },
+    { "id": "coord-flow", "from": "coord", "to": "flow", "label": "watches coord store", "variant": "default" },
+    { "id": "flow-coord", "from": "flow", "to": "coord", "label": "recurring to problem to change", "variant": "default" },
+    { "id": "scheduler-managers", "from": "scheduler", "to": "managers", "label": "scheduled governance pass", "variant": "default" },
+    { "id": "managers-coord", "from": "managers", "to": "coord", "label": "validate and reclassify", "variant": "default" },
+    { "id": "managers-cmdbsync", "from": "managers", "to": "cmdbsync", "label": "continuous audit", "variant": "dashed" },
+    { "id": "cmdbsync-age", "from": "cmdbsync", "to": "age", "label": "MERGE CIs + drift_audit", "variant": "default" },
+    { "id": "coord-itsm", "from": "coord", "to": "itsm", "label": "L2/L3 ITSM sync", "variant": "dashed" },
+    { "id": "cmdbsync-itsm", "from": "cmdbsync", "to": "itsm", "label": "L2/L3 CMDB sync", "variant": "dashed" },
+    { "id": "managers-operator", "from": "managers", "to": "operator", "label": "digest and report", "variant": "default" }
+  ]
+}
